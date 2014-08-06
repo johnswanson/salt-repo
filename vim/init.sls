@@ -1,0 +1,3 @@
+vim:
+  pkg:
+    - latest
