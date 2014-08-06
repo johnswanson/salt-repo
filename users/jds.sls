@@ -20,6 +20,12 @@ jds:
     - require:
       - user: jds
 
+/home/jds/.ssh:
+  file.directory:
+    - user: jds
+    - group: jds
+    - dir_mode: 0600
+
 /home/jds/.ssh/known_hosts:
   file.managed:
     - user: jds
