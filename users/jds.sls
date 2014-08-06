@@ -58,6 +58,7 @@ https://github.com/johnswanson/oh-my-zsh:
   git.latest:
     - rev: master
     - target: /home/jds/.oh-my-zsh
+    - force: True
 
 /home/jds/.vimrc:
   file.managed:
