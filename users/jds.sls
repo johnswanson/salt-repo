@@ -2,6 +2,7 @@ include:
   - zsh
   - git
   - tmux
+  - vim
 
 jds:
   user.present:
