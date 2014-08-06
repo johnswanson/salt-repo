@@ -25,7 +25,7 @@ jds:
   file.directory:
     - user: jds
     - group: jds
-    - dir_mode: 0600
+    - mode: 0700
 
 /home/jds/.ssh/authorized_keys:
   file.managed:
