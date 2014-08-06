@@ -27,12 +27,12 @@ jds:
     - group: jds
     - dir_mode: 0600
 
-/home/jds/.ssh/known_hosts:
+/home/jds/.ssh/authorized_keys:
   file.managed:
     - user: jds
     - group: jds
     - mode: 0600
-    - source: salt://users/jds.known_hosts
+    - source: salt://users/jds.authorized_keys
     - require:
       - user: jds
 
