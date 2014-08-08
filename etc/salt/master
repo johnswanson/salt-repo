@@ -347,6 +347,7 @@
 # "roots" which uses the "file_roots" option.
 #
 fileserver_backend:
+  - roots
   - git
 #
 # To use multiple backends list them in the order they are searched:
@@ -391,6 +392,7 @@ gitfs_remotes:
   - git://github.com/johnswanson/sun-java-formula.git
   - git://github.com/johnswanson/hadoop-formula.git
   - git://github.com/johnswanson/hostsfile-formula.git
+  - git://github.com/johnswanson/zookeeper-formula.git
 #
 # The gitfs_ssl_verify option specifies whether to ignore ssl certificate
 # errors when contacting the gitfs backend. You might want to set this to
