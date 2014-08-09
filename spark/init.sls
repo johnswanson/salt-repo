@@ -1,27 +1,7 @@
 {%- from 'spark/settings.sls' import spark with context %}
-{%- set user = spark.get('user', {}) %}
+
 {%- set spark_clients = salt['mine.get']('roles:spark_client', 'network.interfaces', 'grain').keys() %}
 {%- set all_roles = salt['grains.get']('roles', []) %}
-
-{{ user.username }}:
-  group.present:
-    - gid: {{ user.uid }}
-  user.present:
-    - uid: {{ user.uid }}
-    - gid: {{ user.uid }}
-    - home: /home/{{ user.username }}
-    - require:
-      - group: {{ user.username }}
-
-/etc/default/spark:
-  file.managed:
-    - source: salt://spark/files/env.jinja
-    - mode: 644
-    - template: jinja
-    - user: root
-    - group: root
-    - context:
-      java_home: {{ spark.java_home }}
 
 unpack-spark-dist:
   cmd.run:
@@ -37,6 +17,21 @@ spark-home-link:
     - require:
       - cmd: unpack-spark-dist
 
+{{ spark.real_home }}/conf/spark-env.sh:
+  file.managed:
+    - source: salt://spark/files/spark-env.sh.jinja
+    - mode: 755
+    - template: jinja
+    - user: root
+    - group: root
+    - context:
+      java_home: {{ spark.java_home }}
+      spark_master: "{%- if 'spark_master' in all_roles %}{{ salt['grains.get']('id') }}{%- endif %}"
+      spark_master_port: "{%- if 'spark_master' in all_roles %}{{ spark.spark_master_port }}{%- endif %}"
+      daemon_opts: {{ spark.daemon_opts }}
+    - require:
+      - cmd: unpack-spark-dist
+
 chown-spark-home:
   cmd.run:
     - name: chown -R root.root {{ spark['real_home'] }}
@@ -44,13 +39,15 @@ chown-spark-home:
 {% if 'spark_master' in all_roles %}
 start-spark-master:
   cmd.run:
-    - name: env JAVA_HOME={{ spark.java_home}} {{ spark.spark_master_cmd }}
-    - user: {{ user.username }}
+    - name: "{{ spark.spark_master_cmd }}"
+    - require:
+      - file: {{ spark.real_home }}/conf/spark-env.sh
 {% endif %}
 {% if 'spark_client' in all_roles %}
 start-spark-client:
   cmd.run:
-    - name: env JAVA_HOME={{ spark.java_home }} {{ spark.spark_client_cmd }}
-    - user: {{ user.username }}
+    - name: "{{ spark.spark_client_cmd }}"
+    - require:
+      - file: {{ spark.real_home }}/conf/spark-env.sh
 {% endif %}
 
