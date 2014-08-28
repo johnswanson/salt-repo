@@ -1,5 +1,5 @@
 base:
-  'hadoop-*':
+  '*hadoop*':
     - hostsfile
     - sun-java
     - sun-java.env
