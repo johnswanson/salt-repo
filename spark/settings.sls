@@ -3,26 +3,7 @@
 {% set g = salt['grains.get']('spark', {}) %}
 {% set gc = g.get('config', {}) %}
 
-{%- from 'hadoop/settings.sls' import hadoop with context %} # need hadoop version to know which spark_version we need
-{%- set hadoop_version = hadoop.version_name %}
-{%- set hadoop_spark_versions = { 'apache-1' : 'spark-1.0.2-bin-hadoop1',
-                                 'apache-2' : 'spark-1.0.2-bin-hadoop2',
-                                 'hdp-1'    : 'spark-1.0.2-bin-hadoop1',
-                                 'hdp-2'    : 'spark-1.0.2-bin-hadoop2',
-                                 'cdh-4'    : 'spark-1.0.2-bin-cdh4',
-                                 'cdh-5'    : 'spark-1.0.2-bin-hadoop2',
- }%}
-{% set default_dist_id = "" %}
-{% for possible_hadoop, spark_version in hadoop_spark_versions.iteritems(): %}
-  {% if hadoop_version.startswith(possible_hadoop): %}
-    {% set default_dist_id = hadoop_spark_versions[possible_hadoop] %}
-    {% break %}
-  {% endif %}
-{% endfor %}
-{% if not default_dist_id: %}
-  {% set default_dist_id = 'spark-1.0.2-bin-hadoop2' %}
-{% endif %}
-
+{% set default_dist_id = 'spark-1.0.2-bin-hadoop2' %}
 {% set dist_id = g.get('version', p.get('version', default_dist_id)) %}
 {% set versions = { 'spark-1.0.2-bin-hadoop2' : { 'version'       : '1.0.2',
                                                   'version_name'  : 'spark-1.0.2-bin-hadoop2',
@@ -87,7 +68,7 @@
 {%- set spark_client_start = alt_home + '/sbin/spark-daemon.sh start org.apache.spark.deploy.worker.Worker 0 spark://' + masters_with_ports %}
 {%- set spark_client_cmd   = spark_client_stop + " && sleep 1 && " + spark_client_start %}
 
-{%- set java_home = salt['pillar.get']('java_home', hadoop.get('java_home', '/usr/lib/java')) %}
+{%- set java_home = salt['pillar.get']('java_home', p.get('java_home', '/usr/lib/java')) %}
 
 {%- set spark = {} %}
 {%- do spark.update( {   'dist_id'           : dist_id,
