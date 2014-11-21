@@ -1,6 +1,6 @@
 #!/bin/bash
 ln -s /home/dhc-user/salt-repo/etc/salt/minion /etc/salt/minion
-echo "192.168.0.119 salt" >> /etc/hosts
+echo "192.168.0.53 salt" >> /etc/hosts
 add-apt-repository -y ppa:saltstack/salt
 apt-get update
 apt-get install -y salt-minion
